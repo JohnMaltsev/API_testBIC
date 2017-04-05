@@ -12,9 +12,9 @@
 
 @interface JMServerManager : NSObject
 
-+ (JMServerManager*) sharedManager;
-
 @property (strong, nonatomic) NSString * saltValue;
+
++ (JMServerManager*) sharedManager;
 
 - (void)getSaltForUserLogin:(NSString*) userLogin
                   onSuccess:(void(^)(NSString *salt))success
@@ -24,7 +24,6 @@
                            useUserName:(NSString*) enteredLogin
                              onSuccess:(void(^)(JMAccessToken *token))success
                              onFailure:(void(^)(NSArray *errors)) failure;
-    
 
 - (void) uploadVideo:(NSURL*) videoData
            onSuccess:(void(^)(JMAccessToken *token))success

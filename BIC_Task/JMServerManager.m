@@ -13,14 +13,14 @@
 
 @interface JMServerManager ()
 
-@property (strong, nonatomic) AFHTTPSessionManager *requestOperationManager;
+@property (strong, nonatomic) AFHTTPSessionManager *requestOperationManager;               
 @property (strong, nonatomic) NSURL *url;
 @property (strong, nonatomic) NSString *token;
 
 @end
 
 @implementation JMServerManager
-
+//JMServerManager делает все запросы на сервер
 + (JMServerManager*) sharedManager {
     
     //cоздание сингл тона
@@ -28,7 +28,7 @@
     
     //гарантирует что код вызовется один раз
     static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    dispatch_once(&onceToken, ^{ //Это нужно чтобы если много потоков не вызвали этот метод разные потоки одновременно
         manager = [[JMServerManager alloc] init];
     });
     
@@ -57,8 +57,9 @@
                    onFailure:(void(^)(NSArray *errors)) failure {
     
     
-    NSDictionary *dict = @{@"login":userLogin};
+    NSDictionary *dict = @{@"login":userLogin};//создали dict где login это ключ параметра, а userLogin это значение/ Затем передаем как параметры в запрос POST
     
+    //задаем параметр заголовка header
     [self.requestOperationManager.responseSerializer.acceptableContentTypes setByAddingObject:@"application/json"];
     
     NSLog(@"Sent parameter to server : %@",dict);
@@ -70,27 +71,36 @@
      success:^(NSURLSessionTask *task, id responseObject) {
          NSLog(@"JSON: %@", responseObject);
          
+         //создаем строку и вытаскиваем значение соли
          NSString* salt = [responseObject valueForKeyPath:@"data.salt"];
          
+         //Проверка что значение существует а не nil
          if (salt) {
              self.saltValue = salt;
              success(salt);
          }else {
+             //если соли нет, смотрим на наличие ошибок
+             
+             //получили массив ошибок
              NSArray* dictArray = [responseObject objectForKey:@"errors"];
              
-             NSMutableArray *errorList = [NSMutableArray array];
              
+             //создали пустой  массив
+             NSMutableArray *errorList = [NSMutableArray array];
+             //проходим по каждому элементу из массива ошибок
              for (NSDictionary *dict in dictArray)  {
-                 
+                 //из икшнари конструируем объект
                  JMErrorObject *error = [[JMErrorObject alloc]initWithServerResponse:dict];
+                 //добавляем объект в пустой массив
                  [errorList addObject:error];
              }
+          // передаем блоку массив ошибок /потом вызовем блок во VC
              failure(errorList);
          }
          
      } failure:^(NSURLSessionTask *operation, NSError *error) {
          NSLog(@"Error: %@", error);
-         
+         //в случае failure в блок приходит operation и error /создаем объек и присваиваем проперти объекта error code и error localizedDescription /  затем передаем объект в блок failure которы принимает массив ошибок
          JMErrorObject *errorObj = [JMErrorObject new];
          errorObj.errorCode = [error code];
          errorObj.message = [error localizedDescription];

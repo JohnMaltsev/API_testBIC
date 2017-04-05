@@ -17,5 +17,4 @@
 
 - (instancetype) initWithServerResponse:(NSDictionary*) responseToken;
 
-
 @end

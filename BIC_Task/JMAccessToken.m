@@ -17,7 +17,7 @@
         
         self.token = [responseToken objectForKey:@"access_token"];
         self.tokenType = [responseToken objectForKey:@"token_type"];
-        self.actionTime = [[responseToken objectForKey:@"expires_i"] doubleValue];
+        self.actionTime = [[responseToken objectForKey:@"expires_in"] doubleValue];
     }
     
     return self;

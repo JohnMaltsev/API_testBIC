@@ -25,6 +25,7 @@
     [self initView];
     [self initButtons];
     
+    //если запускаю на симмуляторе, а у него нет камеры, то выведет ошибку.UIImagePickerController-VC c камерой
     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         
         [self showErrorDialogWith:@"Error" and:@"Device has no camera"];
@@ -42,7 +43,7 @@
 -(void)getSaltAndToken {
     
     [[JMServerManager sharedManager] getSaltForUserLogin:@"test" onSuccess:^(NSString *salt) {
-        
+     //в случае onSuccess мы получаем соль и после этого мы можем запрашивать токен (без соли не сможем запросить токен)
         NSLog(@"salt: %@", salt);
         
         [[JMServerManager sharedManager] getAccessTokenForUserPassword:@"123456" useUserName:@"test" onSuccess:^(JMAccessToken *token) {
@@ -53,7 +54,7 @@
         }];
         
     } onFailure:^(NSArray *errors) {
-        
+       //прилетел сюда JMErrorObject / мы сделали приведения типа взяли 1й обект и достучались до  его message
         NSString * message = ((JMErrorObject *)errors.firstObject).message;
         NSString *title =  [NSString stringWithFormat:@"%ld", (long)((JMErrorObject *)errors.firstObject).errorCode];
         [self showErrorDialogWith:title and:message];
@@ -74,8 +75,7 @@
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     view.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:view];
-    self.myView = view;
-    
+    self.myView = view;    
 }
 
 #pragma mark - Initiazizad buttons
@@ -127,6 +127,7 @@
     [sendVideo addTarget:self action:@selector(actionSendVideo:) forControlEvents:UIControlEventTouchUpInside];
 }
 
+//Allert - это всплыв диалоговое окно (здесь с ошибкой)
 -(void) showErrorDialogWith:(NSString*)title and:(NSString*)message  {
     
     UIAlertController* alertController = [UIAlertController
@@ -174,9 +175,9 @@
 }
 
 #pragma mark - UIImagePickerControllerDelegate
-
+//Когда нижимает кнопку useVideo то к нам в didFinishPickingMediaWithInfo прилетает инфоNSDictionary и мы извлекаем videoURL
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    
+    //здесь извлекаем видеУрл
     NSURL *videoURL = [info objectForKey:UIImagePickerControllerMediaURL];
 
 //    AVAsset *avAsset = [AVURLAsset URLAssetWithURL:videoURL options:nil];
