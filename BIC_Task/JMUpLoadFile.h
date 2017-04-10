@@ -12,8 +12,8 @@
 @interface JMUpLoadFile : NSObject
 
 @property (assign, nonatomic) NSInteger errorCode;
-@property (strong, nonatomic) NSString * idFile;
-@property (strong, nonatomic) NSString * link;
-@property (strong, nonatomic) JMPreviewsObject * preview;
+@property (strong, nonatomic) NSString *idFile;
+@property (strong, nonatomic) NSString *link;
+@property (strong, nonatomic) JMPreviewsObject *preview;
 
 @end

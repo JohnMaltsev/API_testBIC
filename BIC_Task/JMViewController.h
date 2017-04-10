@@ -10,6 +10,5 @@
 
 @interface JMViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
-
 @end
 

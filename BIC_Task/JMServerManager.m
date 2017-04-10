@@ -11,6 +11,7 @@
 #include <CommonCrypto/CommonDigest.h>
 #import "JMUpLoadFile.h"
 
+
 @interface JMServerManager ()
 
 @property (strong, nonatomic) AFHTTPSessionManager *requestOperationManager;               
@@ -84,7 +85,6 @@
              //получили массив ошибок
              NSArray* dictArray = [responseObject objectForKey:@"errors"];
              
-             
              //создали пустой  массив
              NSMutableArray *errorList = [NSMutableArray array];
              //проходим по каждому элементу из массива ошибок
@@ -121,7 +121,8 @@
     NSString* sha256pwdSalt = [self sha256:value];
     
     NSDictionary *tokenDict = @{@"grant_type":@"password",
-                                @"username":enteredLogin, @"password":sha256pwdSalt};
+                                  @"username":enteredLogin,
+                                  @"password":sha256pwdSalt};
     
     
     NSLog(@"Sent parameter to server : %@",tokenDict);
@@ -194,7 +195,10 @@
     
     self.requestOperationManager = manager;
     
-    [self.requestOperationManager POST:@"file/upload" parameters:tokenDict constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+    [self.requestOperationManager
+     POST:@"file/upload"
+     parameters:tokenDict
+     constructingBodyWithBlock:^(id <AFMultipartFormData> formData) {
         [formData appendPartWithFileURL:videoData name:@"video" error:nil];
     } progress:nil success:^(NSURLSessionDataTask *operation, id responseObject) {
         NSLog(@"Success: %@", responseObject);
